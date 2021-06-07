@@ -11,7 +11,10 @@
     "lint": "yarn lint:js"
   },
   "dependencies": {
+    "@nuxt/http": "^0.6.4",
+    "@nuxtjs/composition-api": "^0.24.3",
     "core-js": "^3.9.1",
+    "express": "^4.17.1",
     "nuxt": "^2.15.3"
   },
   "devDependencies": {

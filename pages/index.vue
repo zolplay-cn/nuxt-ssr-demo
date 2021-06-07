@@ -1,70 +1,64 @@
 <template>
-  <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">ssr-demo</h1>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
+  <div
+    class="min-h-screen flex flex-col justify-center items-center bg-gray-800"
+  >
+    <h1 class="text-2xl text-gray-200">SSR Demo</h1>
+    <template v-if="users.length > 0">
+      <h2 class="font-bold mt-4 text-blue-400">Users:</h2>
+      <ul class="mt-3 flex flex-col space-y-2">
+        <li
+          v-for="user in users"
+          :key="user.name"
+          class="text-green-500 font-medium text-lg"
         >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div>
-    </div>
+          {{ user.name }}
+        </li>
+      </ul>
+    </template>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import {
+  defineComponent,
+  ref,
+  useContext,
+  useFetch,
+  useMeta,
+} from '@nuxtjs/composition-api'
 
-export default Vue.extend({})
+type UserDto = {
+  name: string
+  email: string
+}
+
+type TestApiResponse = {
+  message: string
+  users: UserDto[]
+}
+
+export default defineComponent({
+  setup() {
+    const message = ref('')
+    const users = ref<UserDto[]>([])
+
+    const { title } = useMeta()
+    const { $http } = useContext()
+
+    const { $fetch } = useFetch(async () => {
+      const data = await $http.$get<TestApiResponse>('/api/test')
+
+      message.value = data.message
+      users.value = data.users
+
+      title.value = `${message.value} with ${users.value.length} users`
+    })
+
+    $fetch()
+
+    return { users }
+  },
+
+  head: {},
+})
 </script>
-
-<style>
-/* Sample `apply` at-rules with Tailwind CSS
-.container {
-@apply min-h-screen flex justify-center items-center text-center mx-auto;
-}
-*/
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
-</style>
