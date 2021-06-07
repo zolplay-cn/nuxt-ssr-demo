@@ -22,6 +22,8 @@
 import {
   defineComponent,
   ref,
+  ssrPromise,
+  ssrRef,
   useContext,
   useFetch,
   useMeta,
@@ -39,13 +41,13 @@ type TestApiResponse = {
 
 export default defineComponent({
   setup() {
-    const message = ref('')
-    const users = ref<UserDto[]>([])
+    const message = ssrRef('')
+    const users = ssrRef<UserDto[]>([])
 
     const { title } = useMeta()
     const { $http } = useContext()
 
-    const { $fetch } = useFetch(async () => {
+    ssrPromise(async () => {
       const data = await $http.$get<TestApiResponse>('/api/test')
 
       message.value = data.message
@@ -53,8 +55,6 @@ export default defineComponent({
 
       title.value = `${message.value} with ${users.value.length} users`
     })
-
-    $fetch()
 
     return { users }
   },

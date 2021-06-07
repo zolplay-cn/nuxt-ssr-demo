@@ -8,5 +8,10 @@
         "serverFiles": ["api/**"]
       }
     }
-  ]
+  ],
+  "build": {
+    "env": {
+      "API_URL": "https://nuxt-ssr-demo.vercel.app/"
+    }
+  }
 }
